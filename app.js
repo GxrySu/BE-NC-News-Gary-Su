@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
-const { getTopics, getArticleById } = require("./controller/controller.js");
+const { getTopics, getArticleById, getUsers } = require("./controller/controller.js");
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
-
+app.get("/api/users", getUsers)
 
 
 app.use("/*", (req, res) => {

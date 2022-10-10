@@ -13,8 +13,18 @@ afterAll(() => {
 });
 
 describe.only("GET", () => {
+  describe("/api/{invalid path}", () => {
+    it("404: should return path not found for invalid paths", () => {
+      return request(app)
+        .get("/api/invalid-path")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Path not found!");
+        });
+    });
+  });
   describe("/api/topics", () => {
-    it("200: should return an array of all topics objects", () => {
+    it("200: should return an array of all topic objects", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
@@ -27,16 +37,6 @@ describe.only("GET", () => {
               slug: expect.any(String),
             });
           });
-        });
-    });
-  });
-  describe("/api/{invalid path}", () => {
-    it("404: should return path not found for invalid paths", () => {
-      return request(app)
-        .get("/api/invalid-path")
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Path not found!");
         });
     });
   });
@@ -73,6 +73,23 @@ describe.only("GET", () => {
           expect(body.msg).toBe("Invalid request");
         });
     });
-    
+  });
+  describe("/api/users", () => {
+    it("200: should return an array of all user objects", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Array);
+          expect(body).toHaveLength(4);
+          body.forEach((users) => {
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String)
+            });
+          });
+        });
+    });
   });
 });
