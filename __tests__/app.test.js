@@ -36,7 +36,33 @@ describe.only("GET", () => {
         .get("/api/invalid-path")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Path not found!")
+          expect(body.msg).toBe("Path not found!");
+        });
+    });
+  });
+  describe("/api/articles/:article_id", () => {
+    it("200: should return article object matching article id with its properties", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 100,
+          });
+        });
+    });
+    it("400: should return Invalid Request", () => {
+      return request(app)
+        .get("/api/articles/100")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
         });
     });
   });
