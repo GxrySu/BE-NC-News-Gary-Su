@@ -57,7 +57,7 @@ describe.only("GET", () => {
           });
         });
     });
-    it("400: should return Invalid Request", () => {
+    it("400: should return not found if passed an id that doesn't exist", () => {
       return request(app)
         .get("/api/articles/100")
         .expect(404)
@@ -65,5 +65,14 @@ describe.only("GET", () => {
           expect(body.msg).toBe("Not Found");
         });
     });
+    it("400: should return Invalid Request", () => {
+      return request(app)
+        .get("/api/articles/BANANA")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid request");
+        });
+    });
+    
   });
 });
