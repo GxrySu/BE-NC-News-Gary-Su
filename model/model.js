@@ -21,14 +21,22 @@ exports.fetchArticleById = (article_id) => {
 };
 
 exports.fetchUsers = () => {
-  return db
-    .query("SELECT * FROM users")
-    .then(({ rows: users }) => {
-      return users;
+  return db.query("SELECT * FROM users").then(({ rows: users }) => {
+    return users;
   });
 };
-
-
+exports.fetchArticles = () => {
+  return db
+    .query(
+      `SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count 
+       FROM articles 
+       LEFT JOIN comments ON comments.article_id = articles.article_id
+       GROUP BY articles.article_id;`
+    )
+    .then(({ rows: articles }) => {
+      return articles;
+    });
+};
 
 exports.updateArticleById = (article_id, newVote) => {
   if (
