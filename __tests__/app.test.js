@@ -54,6 +54,7 @@ describe("GET", () => {
             body: "I find this existence challenging",
             created_at: "2020-07-09T20:11:00.000Z",
             votes: 100,
+            comment_count: 11,
           });
         });
     });
@@ -62,7 +63,7 @@ describe("GET", () => {
         .get("/api/articles/100")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Not Found");
+          expect(body.msg).toBe("ID Not Found");
         });
     });
     it("400: should return Invalid Request", () => {
@@ -89,6 +90,42 @@ describe("GET", () => {
               avatar_url: expect.any(String),
             });
           });
+        });
+    });
+  });
+  describe("/api/articles/:article_id (comment count)", () => {
+    it("200: should return article object matching article id with all its properties and added comment_count property", () => {
+      return request(app)
+        .get("/api/articles/6")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment_count).toBe(1)
+          expect(body).toEqual({
+            article_id: 6,
+            title: "A",
+            topic: "mitch",
+            author: "icellusedkars",
+            body: "Delicious tin of cat food",
+            created_at: "2020-10-18T01:00:00.000Z",
+            votes: 0,
+            comment_count: 1,
+          });
+        });
+    });
+    it("400: should return not found if passed an id that doesn't exist", () => {
+      return request(app)
+        .get("/api/articles/420")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("ID Not Found");
+        });
+    });
+    it("400: should return Invalid Request", () => {
+      return request(app)
+        .get("/api/articles/APPLE")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid request");
         });
     });
   });
