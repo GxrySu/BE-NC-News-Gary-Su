@@ -153,6 +153,18 @@ describe("PATCH", () => {
           expect(body.msg).toEqual("Invalid Request");
         });
     });
+    it("400: should return error if request is invalid", () => {
+      const newVote = {
+        inc_vote: "banana",
+      };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(newVote)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Invalid Request");
+        });
+    });
     it("404: should return error if id is invalid ", () => {
       const newVote = {
         inc_votes: 1,
