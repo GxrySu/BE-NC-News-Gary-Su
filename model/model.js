@@ -27,3 +27,27 @@ exports.fetchUsers = () => {
       return users;
   });
 };
+
+
+
+exports.updateArticleById = (article_id, newVote) => {
+  if (
+    !newVote.hasOwnProperty("inc_votes") ||
+    typeof newVote.inc_votes !== "number"
+  ) {
+    return Promise.reject({ status: 400, msg: "Invalid Request" });
+  }
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $2 
+        WHERE article_id = $1 RETURNING *;`,
+      [article_id, newVote.inc_votes]
+    )
+    .then(({ rows }) => {
+      const [article] = rows;
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "ID Not Found" });
+      }
+      return article;
+    });
+};
