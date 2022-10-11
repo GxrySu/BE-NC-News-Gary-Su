@@ -10,12 +10,14 @@ exports.fetchArticleById = (article_id) => {
   const id = Number(article_id);
   if (typeof id === "number")
     return db
-      .query(`SELECT articles.*,count(comments.comment_id)::INT 
+      .query(
+        `SELECT articles.*,count(comments.comment_id)::INT 
       AS comment_count FROM articles 
       LEFT JOIN comments ON comments.article_id = articles.article_id 
       WHERE articles.article_id = $1 
       GROUP BY articles.article_id;`,
-      [article_id])
+        [article_id]
+      )
       .then(({ rows: articles }) => {
         const [article] = articles;
         if (articles.length === 0) {
@@ -41,6 +43,23 @@ exports.fetchArticles = () => {
     )
     .then(({ rows: articles }) => {
       return articles;
+    });
+};
+
+exports.fetchCommentsByArticleId = (article_id) => {
+  return db
+    .query(
+      `SELECT comment_id, votes, created_at, author, body 
+       FROM comments 
+       WHERE article_id = $1
+       ORDER BY created_at DESC;`,
+      [article_id]
+    )
+    .then(({ rows: comments }) => {
+      if (comments.length === 0){
+        return Promise.reject({status: 404, msg: "Not Found"})
+      }
+      return comments
     });
 };
 

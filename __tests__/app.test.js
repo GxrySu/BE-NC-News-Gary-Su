@@ -40,6 +40,24 @@ describe("GET", () => {
         });
     });
   });
+  describe("/api/users", () => {
+    it("200: should return an array of all user objects", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Array);
+          expect(body).toHaveLength(4);
+          body.forEach((users) => {
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            });
+          });
+        });
+    });
+  });
   describe("/api/articles", () => {
     it("200: should return an array of all article objects", () => {
       return request(app)
@@ -62,7 +80,7 @@ describe("GET", () => {
           });
         });
     });
-  })
+  });
   describe("/api/articles/:article_id", () => {
     it("200: should return article object matching article id with its properties", () => {
       return request(app)
@@ -98,32 +116,13 @@ describe("GET", () => {
         });
     });
   });
-  describe("/api/users", () => {
-    it("200: should return an array of all user objects", () => {
-      return request(app)
-        .get("/api/users")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toBeInstanceOf(Array);
-          expect(body).toHaveLength(4);
-          body.forEach((users) => {
-            expect.objectContaining({
-              username: expect.any(String),
-              name: expect.any(String),
-              avatar_url: expect.any(String),
-            });
-          });
-        });
-    });
-  });
-})
   describe("/api/articles/:article_id (comment count)", () => {
     it("200: should return article object matching article id with all its properties and added comment_count property", () => {
       return request(app)
         .get("/api/articles/6")
         .expect(200)
         .then(({ body }) => {
-          expect(body.comment_count).toBe(1)
+          expect(body.comment_count).toBe(1);
           expect(body).toEqual({
             article_id: 6,
             title: "A",
@@ -136,7 +135,7 @@ describe("GET", () => {
           });
         });
     });
-    it("400: should return not found if passed an id that doesn't exist", () => {
+    it("404: should return not found if passed an id that doesn't exist", () => {
       return request(app)
         .get("/api/articles/420")
         .expect(404)
@@ -153,7 +152,55 @@ describe("GET", () => {
         });
     });
   });
-
+  describe("/api/articles/:article_id/comments", () => {
+    it("200: should return array of comment objects matching article id with all its properties", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Array);
+          expect(body).toHaveLength(11);
+          body.forEach((comment) => {
+            expect.objectContaining({
+              comment_id: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+            });
+          });
+        });
+    });
+    it("200: should return array of comment objects from starting with most recently created", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Array);
+          expect(body).toHaveLength(11);
+          expect(body[0].created_at).toBe("2020-11-03T21:00:00.000Z");
+          expect(body[1].created_at).toBe("2020-10-31T03:03:00.000Z");
+          expect(body[10].created_at).toBe("2020-01-01T03:08:00.000Z");
+        });
+    });
+    it("404: should return Not Found for id that doesnt exist", () => {
+      return request(app)
+        .get("/api/articles/420/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+    it("400: should return Invalid Request", () => {
+      return request(app)
+        .get("/api/articles/APPLE/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid request");
+        });
+    });
+  });
+});
 describe("PATCH", () => {
   describe("/api/articles/:article_id", () => {
     it("200: should return article with updated value (Increment)", () => {
@@ -237,5 +284,5 @@ describe("PATCH", () => {
           expect(body.msg).toEqual("ID Not Found");
         });
     });
+  });
 });
-})
