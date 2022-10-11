@@ -36,6 +36,7 @@ exports.getUsers = (req, res, next) => {
       next(err);
     });
 };
+
 exports.getArticles = (req, res, next) => {
   fetchArticles()
     .then((articles) => {

@@ -40,6 +40,29 @@ describe("GET", () => {
         });
     });
   });
+  describe("/api/articles", () => {
+    it("200: should return an array of all article objects", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Array);
+          expect(body).toHaveLength(12);
+          body.forEach((articles) => {
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(Number),
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            });
+          });
+        });
+    });
+  })
   describe("/api/articles/:article_id", () => {
     it("200: should return article object matching article id with its properties", () => {
       return request(app)
