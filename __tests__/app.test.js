@@ -49,7 +49,6 @@ describe("GET", () => {
           expect(body).toBeInstanceOf(Array);
           expect(body).toHaveLength(12);
           body.forEach((articles) => {
-            console.log(articles)
             expect.objectContaining({
               article_id: expect.any(Number),
               title: expect.any(String),
