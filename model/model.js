@@ -56,10 +56,10 @@ exports.fetchCommentsByArticleId = (article_id) => {
       [article_id]
     )
     .then(({ rows: comments }) => {
-      if (comments.length === 0){
-        return Promise.reject({status: 404, msg: "Not Found"})
+      if (comments.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
       }
-      return comments
+      return comments;
     });
 };
 
@@ -73,8 +73,8 @@ exports.updateArticleById = (article_id, newVote) => {
   return db
     .query(
       `UPDATE articles SET votes = votes + $2 
-        WHERE article_id = $1 RETURNING *;`,
-      [article_id, newVote.inc_votes]
+       WHERE article_id = $1 RETURNING *;`,
+       [article_id, newVote.inc_votes]
     )
     .then(({ rows }) => {
       const [article] = rows;
@@ -82,5 +82,25 @@ exports.updateArticleById = (article_id, newVote) => {
         return Promise.reject({ status: 404, msg: "ID Not Found" });
       }
       return article;
+    });
+};
+
+exports.addCommentsByArticleId = (article_id, newComment) => {
+  
+  const { body, username } = newComment;
+  if (typeof username !== 'string' || typeof body !== 'string') {
+    return Promise.reject({ status: 400, msg: "Invalid Request" })
+  }
+  if (!username || !body) {
+    return Promise.reject({ status: 400, msg: "Invalid Request" });
+  }
+  return db
+    .query(
+      `INSERT INTO comments (body, author, article_id)
+       VALUES ($1, $2, $3) RETURNING *;`, 
+       [body, username, article_id]
+    )
+    .then(({ rows: comment }) => {
+      return comment;
     });
 };
