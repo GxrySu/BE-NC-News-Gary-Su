@@ -3,6 +3,8 @@ const request = require("supertest");
 const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data");
+const { getArticleById } = require("../controller/controller.js");
+const { string } = require("pg-format");
 
 beforeEach(() => {
   return seed(testData);
@@ -201,6 +203,7 @@ describe("GET", () => {
     });
   });
 });
+
 describe("PATCH", () => {
   describe("/api/articles/:article_id", () => {
     it("200: should return article with updated value (Increment)", () => {
@@ -282,6 +285,81 @@ describe("PATCH", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toEqual("ID Not Found");
+        });
+    });
+  });
+});
+
+describe("POST", () => {
+  describe("/api/articles/:article_id/comments", () => {
+    it("201: Add a new comments with all its values", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "Very good, very nice",
+      };
+      return request(app)
+        .post("/api/articles/9/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body: [comment] }) => {
+          expect(comment.comment_id).toBe(19);
+          expect(comment.body).toBe("Very good, very nice");
+          expect(comment.votes).toBe(0);
+          expect(comment.author).toBe("butter_bridge");
+          expect(comment.article_id).toBe(9);
+          expect(typeof comment.created_at).toBe("string");
+        });
+    });
+    it("400: should return error when passed an invalid keys as request", () => {
+      const newComment = {
+        user: "P",
+        body: "T",
+      };
+      return request(app)
+        .post("/api/articles/9/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid Request");
+        });
+    });
+    it("400: should return error when passed an invalid key values as request", () => {
+      const newComment = {
+        username: 420,
+        body: 2000,
+      };
+      return request(app)
+        .post("/api/articles/9/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid Request");
+        });
+    });
+    it("400: should return error when passed an invalid id", () => {
+      const newComment = {
+        username: "gary",
+        body: "Borgir",
+      };
+      return request(app)
+        .post("/api/articles/ORANGE/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid request");
+        });
+    });
+    it("404: should return error when passed an non-existing id", () => {
+      const newComment = {
+        username: "gary",
+        body: "Borgir",
+      };
+      return request(app)
+        .post("/api/articles/9999/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("ID not Found");
         });
     });
   });
