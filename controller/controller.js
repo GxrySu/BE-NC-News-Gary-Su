@@ -39,8 +39,9 @@ exports.getUsers = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles()
-    .then((articles) => {
+  const { sort_by, order } = req.query
+  fetchArticles(sort_by, order)
+    .then(( articles ) => {
       res.status(200).send(articles);
     })
     .catch((err) => {

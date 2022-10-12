@@ -33,13 +33,20 @@ exports.fetchUsers = () => {
   });
 };
 
-exports.fetchArticles = () => {
+exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
+  const allowedOrder = ["ASC", "DESC"];
+  const inputOrder = order.toUpperCase();
+  const allowedSortBy = ["title", "topic", "author", "created_at", "votes"];
+  if (!allowedSortBy.includes(sort_by) || !allowedOrder.includes(inputOrder)) {
+    return Promise.reject({ status: 400, msg: "Invalid Query Request" });
+  }
   return db
     .query(
       `SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count 
        FROM articles 
        LEFT JOIN comments ON comments.article_id = articles.article_id
-       GROUP BY articles.article_id;`
+       GROUP BY articles.article_id
+       ORDER BY ${sort_by} ${inputOrder};`
     )
     .then(({ rows: articles }) => {
       return articles;
@@ -56,10 +63,10 @@ exports.fetchCommentsByArticleId = (article_id) => {
       [article_id]
     )
     .then(({ rows: comments }) => {
-      if (comments.length === 0){
-        return Promise.reject({status: 404, msg: "Not Found"})
+      if (comments.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
       }
-      return comments
+      return comments;
     });
 };
 
