@@ -5,6 +5,7 @@ const {
   fetchArticles,
   fetchCommentsByArticleId,
   updateArticleById,
+  addCommentsByArticleId,
 } = require("../model/model.js");
 
 exports.getTopics = (req, res, next) => {
@@ -66,6 +67,18 @@ exports.patchArticleById = (req, res, next) => {
   updateArticleById(id, newVote)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postCommentsByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const newComment = req.body;
+  addCommentsByArticleId(article_id, newComment)
+    .then((postedComment) => {
+      res.status(201).send(postedComment);
     })
     .catch((err) => {
       next(err);
