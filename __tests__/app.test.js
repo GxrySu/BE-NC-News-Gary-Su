@@ -310,7 +310,7 @@ describe("POST", () => {
           expect(typeof comment.created_at).toBe("string");
         });
     });
-    it("400: should return error when passed an invalid request", () => {
+    it("400: should return error when passed an invalid keys as request", () => {
       const newComment = {
         user: "P",
         body: "T",
@@ -320,10 +320,10 @@ describe("POST", () => {
         .send(newComment)
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Invalid Request")
+          expect(body.msg).toBe("Invalid Request");
         });
     });
-    it("400: should return error when passed an invalid request", () => {
+    it("400: should return error when passed an invalid key values as request", () => {
       const newComment = {
         username: 420,
         body: 2000,
@@ -333,7 +333,7 @@ describe("POST", () => {
         .send(newComment)
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Invalid Request")
+          expect(body.msg).toBe("Invalid Request");
         });
     });
     it("400: should return error when passed an invalid id", () => {
@@ -346,7 +346,20 @@ describe("POST", () => {
         .send(newComment)
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Invalid request")
+          expect(body.msg).toBe("Invalid request");
+        });
+    });
+    it("404: should return error when passed an non-existing id", () => {
+      const newComment = {
+        username: "gary",
+        body: "Borgir",
+      };
+      return request(app)
+        .post("/api/articles/9999/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("ID not Found");
         });
     });
   });
