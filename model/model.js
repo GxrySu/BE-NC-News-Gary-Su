@@ -74,7 +74,7 @@ exports.updateArticleById = (article_id, newVote) => {
     .query(
       `UPDATE articles SET votes = votes + $2 
        WHERE article_id = $1 RETURNING *;`,
-       [article_id, newVote.inc_votes]
+      [article_id, newVote.inc_votes]
     )
     .then(({ rows }) => {
       const [article] = rows;
@@ -86,10 +86,9 @@ exports.updateArticleById = (article_id, newVote) => {
 };
 
 exports.addCommentsByArticleId = (article_id, newComment) => {
-  
   const { body, username } = newComment;
-  if (typeof username !== 'string' || typeof body !== 'string') {
-    return Promise.reject({ status: 400, msg: "Invalid Request" })
+  if (typeof username !== "string" || typeof body !== "string") {
+    return Promise.reject({ status: 400, msg: "Invalid Request" });
   }
   if (!username || !body) {
     return Promise.reject({ status: 400, msg: "Invalid Request" });
@@ -97,10 +96,20 @@ exports.addCommentsByArticleId = (article_id, newComment) => {
   return db
     .query(
       `INSERT INTO comments (body, author, article_id)
-       VALUES ($1, $2, $3) RETURNING *;`, 
-       [body, username, article_id]
+       VALUES ($1, $2, $3) RETURNING *;`,
+      [body, username, article_id]
     )
     .then(({ rows: comment }) => {
       return comment;
     });
+};
+
+exports.removeCommentsByCommentId = (comment_id) => {
+  return db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`, 
+  [comment_id,]
+  ).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject( {status: 404, msg: "ID not Found"} )
+    }
+  })
 };

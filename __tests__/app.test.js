@@ -3,8 +3,6 @@ const request = require("supertest");
 const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data");
-const { getArticleById } = require("../controller/controller.js");
-const { string } = require("pg-format");
 
 beforeEach(() => {
   return seed(testData);
@@ -361,6 +359,20 @@ describe("POST", () => {
         .then(({ body }) => {
           expect(body.msg).toBe("ID not Found");
         });
+    });
+  });
+});
+
+describe("DELETE", () => {
+  describe("/api/comments/:comment_id", () => {
+    it("204: Deletes a comment given a valid id", () => {
+      return request(app).delete("/api/comments/1").expect(204);
+    });
+    it("404: returns error when passed a non-existing id", () => {
+      return request(app).delete("/api/comments/99").expect(404);
+    });
+    it("400: returns error when passed an invalid id", () => {
+      return request(app).delete("/api/comments/apple").expect(400);
     });
   });
 });
