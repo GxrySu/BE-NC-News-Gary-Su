@@ -82,6 +82,65 @@ describe("GET", () => {
           });
         });
     });
+    it("200: should return an array of all article objects sorted by default values", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    it("200: should return an array of all article objects sorted by title", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSortedBy("title", { descending: true });
+        });
+    });
+    it("200: should return an array of all article objects sorted by created_at in ascending order", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSortedBy("created_at", { descending: false });
+        });
+    });
+    it("200: should return an array of all article objects when passed 2 queries", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author&order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSortedBy("author", { descending: false });
+        });
+    });
+    it("200: should return an array of all article objects when passed topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body }) => {
+          body.forEach((article) => {
+            expect(article.topic).toBe("mitch")
+          })
+        });
+    });
+    
+    it("400: should return Invalid Query Request when passed invalid sort_by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=apples")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid Query Request");
+        });
+    });
+    it("400: should return Invalid Request when passed invalid order query", () => {
+      return request(app)
+        .get("/api/articles?order=apple")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid Query Request");
+        });
+    });
   });
   describe("/api/articles/:article_id", () => {
     it("200: should return article object matching article id with its properties", () => {
