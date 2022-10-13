@@ -114,7 +114,7 @@ describe("GET", () => {
           expect(body).toBeSortedBy("author", { descending: false });
         });
     });
-    it("200: should return an array of all article objects when passed 2 queries", () => {
+    it("200: should return an array of all article objects when passed topic query", () => {
       return request(app)
         .get("/api/articles?topic=mitch")
         .expect(200)
