@@ -67,10 +67,6 @@
       }
     }
   },
-
-  "PATCH /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
-  },
   "PATCH /api/articles/:article_id": {
     "description": "serves an object article matching the id with updated vote value when passed an object of inc_vote property",
     "exampleResponse": {
@@ -90,10 +86,6 @@
       }
     }
   },
-
-  "POST /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
-  },
   "POST /api/articles/:article_id/comments": {
     "description": "serves an array of object comment that has been added",
     "exampleResponse": {
@@ -112,10 +104,6 @@
         }]
       }
     }
-  },
-
-  "DELETE /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
   },
   "DELETE /api/comment/:comment_id": {
     "description": "Deletes a comment from the database by its comment_id"
