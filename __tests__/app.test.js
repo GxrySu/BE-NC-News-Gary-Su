@@ -114,6 +114,17 @@ describe("GET", () => {
           expect(body).toBeSortedBy("author", { descending: false });
         });
     });
+    it("200: should return an array of all article objects when passed 2 queries", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body }) => {
+          body.forEach((article) => {
+            expect(article.topic).toBe("mitch")
+          })
+        });
+    });
+    
     it("400: should return Invalid Query Request when passed invalid sort_by query", () => {
       return request(app)
         .get("/api/articles?sort_by=apples")

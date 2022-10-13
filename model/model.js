@@ -33,21 +33,33 @@ exports.fetchUsers = () => {
   });
 };
 
-exports.fetchArticles = (sort_by = "created_at", order = "desc") => {
+exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   const allowedOrder = ["ASC", "DESC"];
   const inputOrder = order.toUpperCase();
   const allowedSortBy = ["title", "topic", "author", "created_at", "votes"];
+
+  const basicQuery = `SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count 
+  FROM articles 
+  LEFT JOIN comments ON comments.article_id = articles.article_id`;
+
+  const topicQuery = ` WHERE topic = $1`;
+
   if (!allowedSortBy.includes(sort_by) || !allowedOrder.includes(inputOrder)) {
     return Promise.reject({ status: 400, msg: "Invalid Query Request" });
   }
+
+  if (topic === undefined) {
+    return db
+      .query(basicQuery + ` GROUP BY articles.article_id ORDER BY ${sort_by} ${inputOrder};`)
+      .then(({ rows: articles }) => {
+        return articles;
+      });
+  }
+
   return db
-    .query(
-      `SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count 
-       FROM articles 
-       LEFT JOIN comments ON comments.article_id = articles.article_id
-       GROUP BY articles.article_id
-       ORDER BY ${sort_by} ${inputOrder};`
-    )
+    .query(basicQuery + topicQuery + ` GROUP BY articles.article_id ORDER BY ${sort_by} ${inputOrder};`, [
+      topic,
+    ])
     .then(({ rows: articles }) => {
       return articles;
     });
@@ -81,7 +93,7 @@ exports.updateArticleById = (article_id, newVote) => {
     .query(
       `UPDATE articles SET votes = votes + $2 
        WHERE article_id = $1 RETURNING *;`,
-       [article_id, newVote.inc_votes]
+      [article_id, newVote.inc_votes]
     )
     .then(({ rows }) => {
       const [article] = rows;
@@ -93,10 +105,9 @@ exports.updateArticleById = (article_id, newVote) => {
 };
 
 exports.addCommentsByArticleId = (article_id, newComment) => {
-  
   const { body, username } = newComment;
-  if (typeof username !== 'string' || typeof body !== 'string') {
-    return Promise.reject({ status: 400, msg: "Invalid Request" })
+  if (typeof username !== "string" || typeof body !== "string") {
+    return Promise.reject({ status: 400, msg: "Invalid Request" });
   }
   if (!username || !body) {
     return Promise.reject({ status: 400, msg: "Invalid Request" });
@@ -104,8 +115,8 @@ exports.addCommentsByArticleId = (article_id, newComment) => {
   return db
     .query(
       `INSERT INTO comments (body, author, article_id)
-       VALUES ($1, $2, $3) RETURNING *;`, 
-       [body, username, article_id]
+       VALUES ($1, $2, $3) RETURNING *;`,
+      [body, username, article_id]
     )
     .then(({ rows: comment }) => {
       return comment;
