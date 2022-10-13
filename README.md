@@ -6,12 +6,14 @@ This is a server about news data which holds articles on different topics, this 
 
 // First Step 
 
--Clone the database, which can be accessed via this link: https://github.com/GxrySu/BE-NC-News-Gary-Su. 
+-Clone the database, which can be accessed via this link: https://github.com/GxrySu/BE-NC-News-Gary-Su.
+
 -Once you have git cloned, you will need to install all the dependencies so that you can run the following code. (The version of the current dependencies might be outdated)
 
 // Second Step
 
 -Create two files .env.development & .env.test
+
 -Within the files make sure to add `PGDATABASE=<database_name_here>` adding in the database names to the relevent files
 
 // Third Step
