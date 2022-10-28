@@ -1,4 +1,4 @@
-This server will be hosted on heroku at: https://garysu-nc-news.herokuapp.com/
+This server will be hosted on heroku at: https://nc-news-garys.herokuapp.com/
 
 To use the server all the endpoints so far, they are listed in the endpoints.json file
 
