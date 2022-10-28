@@ -17,19 +17,19 @@ app.use(express.json());
 app.use("/api", apiRouter)
 
 // app.get("/api", getApi)
-app.get("/api/topics", getTopics);
-app.get("/api/articles/:article_id", getArticleById);
-app.get("/api/users", getUsers);
-app.get("/api/articles", getArticles);
-app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+// app.get("/api/topics", getTopics);
+// app.get("/api/articles/:article_id", getArticleById);
+// app.get("/api/users", getUsers);
+// app.get("/api/articles", getArticles);
+// app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
-app.patch("/api/articles/:article_id", patchArticleById);
+// app.patch("/api/articles/:article_id", patchArticleById);
 
-app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
+// app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
 
-app.delete("/api/comments/:comment_id", deleteCommentsByCommentId)
+// app.delete("/api/comments/:comment_id", deleteCommentsByCommentId)
 
-app.use("/*", (req, res) => {
+app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Path not found!" });
 });
 app.use((err, req, res, next) => {

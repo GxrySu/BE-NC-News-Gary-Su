@@ -3,7 +3,7 @@ const fs = require("fs/promises");
 const { json } = require("express");
 
 exports.fetchApi = () => {
-  return fs.readFile("endpoints.json").then((res) => {
+  return fs.readFile("express.json").then((res) => {
     return JSON.parse(res)
   })
 }
