@@ -1,4 +1,5 @@
 const express = require("express");
+const apiRouter = require("./router/api-router");
 const app = express();
 const {
   getApi,
@@ -10,10 +11,12 @@ const {
   patchArticleById,
   postCommentsByArticleId,
   deleteCommentsByCommentId
-} = require("./controller/controller.js");
+} = require("./controller/controllers.js");
 app.use(express.json());
 
-app.get("/api", getApi)
+app.use("/api", apiRouter)
+
+// app.get("/api", getApi)
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/users", getUsers);
