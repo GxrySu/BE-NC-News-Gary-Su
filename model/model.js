@@ -1,4 +1,12 @@
 const db = require("../db/connection.js");
+const fs = require("fs/promises");
+const { json } = require("express");
+
+exports.fetchApi = () => {
+  return fs.readFile("endpoints.json").then((res) => {
+    return JSON.parse(res)
+  })
+}
 
 exports.fetchTopics = () => {
   return db.query("SELECT * FROM topics").then(({ rows: topics }) => {

@@ -1,4 +1,5 @@
 const {
+  fetchApi,
   fetchTopics,
   fetchArticleById,
   fetchUsers,
@@ -6,8 +7,14 @@ const {
   fetchCommentsByArticleId,
   updateArticleById,
   addCommentsByArticleId,
-  removeCommentsByCommentId
+  removeCommentsByCommentId,
 } = require("../model/model.js");
+
+exports.getApi = (req, res, next) => {
+  fetchApi().then((api) => {
+    res.status(200).send({ api })
+  });
+};
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -41,9 +48,9 @@ exports.getUsers = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order, topic } = req.query
+  const { sort_by, order, topic } = req.query;
   fetchArticles(sort_by, order, topic)
-    .then(( articles ) => {
+    .then((articles) => {
       res.status(200).send(articles);
     })
     .catch((err) => {
