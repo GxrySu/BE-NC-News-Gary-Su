@@ -29,7 +29,7 @@ app.use("/api", apiRouter)
 
 // app.delete("/api/comments/:comment_id", deleteCommentsByCommentId)
 
-app.all("/*", (req, res) => {
+app.use("/*", (req, res) => {
   res.status(404).send({ msg: "Path not found!" });
 });
 app.use((err, req, res, next) => {
