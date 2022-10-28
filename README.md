@@ -35,4 +35,4 @@ Make sure you have installed supertest and jest-sorted
         -node: 12.0.0
         -npm: 8.0.0
 
-(If "npm run setup-dbs" pops up with error just type in the code manually!!!)
+ (Disclaimer: If "npm run setup-dbs" does not work and pops up with error just type in the code manually!!!)
