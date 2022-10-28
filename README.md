@@ -22,7 +22,7 @@ This is a server about news data which holds articles on different topics, this 
 
 -If you want to access the tests
 
--Make sure you have installed supertest and jest-sorted
+Make sure you have installed supertest and jest-sorted
 
     The minimum versions of the dependencies are as follows: 
 
@@ -34,3 +34,5 @@ This is a server about news data which holds articles on different topics, this 
         -jest: 27.5.1
         -node: 12.0.0
         -npm: 8.0.0
+
+(If "npm run setup-dbs" pops up with error just type in the code manually!!!)
