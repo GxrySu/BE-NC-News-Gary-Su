@@ -1,6 +1,7 @@
 const express = require("express");
 const apiRouter = require("./router/api-router");
 const app = express();
+const cors = require('cors')
 const {
   getApi,
   getTopics,
@@ -13,6 +14,7 @@ const {
   deleteCommentsByCommentId
 } = require("./controller/controllers.js");
 app.use(express.json());
+app.use(cors())
 
 app.use("/api", apiRouter)
 
